@@ -21,4 +21,4 @@ async def home(num: int):
     return {"num": num, "data": [{"num": num, "data": []},{"num": num, "data": []}]}
 
 ApiRouter.get('/register',tags=['Api路由'],summary='注册接口')(register)
-ApiRouter.get('/login',tags=['Api路由'],summary='登录接口')(login)
+ApiRouter.post('/login',tags=['Api路由'],summary='登录接口')(login)
