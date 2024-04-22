@@ -9,9 +9,11 @@
 import os.path
 from pydantic_settings  import BaseSettings
 from typing import List
-
+from dotenv import load_dotenv, find_dotenv
 
 class Config(BaseSettings):
+  # 加载数据库环境变量，有就会覆盖
+  load_dotenv(find_dotenv(), override=True)
   # 调试模式
   APP_DEBUG: bool = True
   # 项目信息
