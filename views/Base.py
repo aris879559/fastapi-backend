@@ -10,7 +10,7 @@ from starlette.responses import HTMLResponse
 from fastapi.responses import  HTMLResponse
 from fastapi.templating import Jinja2Templates
 from config import settings
-from views.home import home, req_page, result_page
+from views.home import home, req_page, result_page, session_test
 
 
 ViewsRouter = APIRouter()
@@ -29,3 +29,5 @@ ViewsRouter.get("/items/{id}", response_class=HTMLResponse)(home)
 
 ViewsRouter.get("/req", response_class=HTMLResponse)(req_page)
 ViewsRouter.post("/req/form", response_class=HTMLResponse)(result_page)
+
+ViewsRouter.get("/session_test", response_class=HTMLResponse)(session_test)

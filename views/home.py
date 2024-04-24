@@ -5,8 +5,9 @@
 @Env: python 3.8.10
 views home
 """
-from fastapi import Request, Form
+from fastapi import Request, Form, Cookie
 from models.base import User
+from typing import Optional
 
 async def home(request: Request, id: str):
     return request.app.state.views.TemplateResponse("index.html", {"request": request, "id": id})
@@ -44,3 +45,13 @@ async def result_page(req: Request, username: str = Form(...), password: str = F
 
     # return req.app.state.views.TemplateResponse("req_result.html", {"request": req, "username": username, "password": password})
     return req.app.state.views.TemplateResponse("req_result.html", {"request": req, "username": get_user.username, "password": get_user.password})
+
+async def session_test(request: Request,session_id: Optional[str] = Cookie(None)):
+    cookie = session_id
+    session = request.session.get("session")
+    page_data = {
+        "cookie": cookie,
+        "session": session
+    }
+    request.session.setdefault("666", "somedata")
+    return request.app.state.views.TemplateResponse("session.html", {"request": request, **page_data})

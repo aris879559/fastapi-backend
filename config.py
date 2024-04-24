@@ -29,5 +29,10 @@ class Config(BaseSettings):
   CORS_ALLOW_METHODS: List[str] = ['*']
   CORS_ALLOW_HEADERS: List[str] = ['*']
 
+  #session 缓存配置，配置session过期时间为14天
+  SECRET_KEY: str = "session"
+  SESSION_COOKIE: str = "session_id"
+  # SESSION_MAX_AGE: int = 14 * 24 * 60 * 60
+  SESSION_MAX_AGE: int = 6
 
 settings = Config()
