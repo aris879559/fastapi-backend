@@ -63,7 +63,7 @@ async def register_mysql(app: FastAPI):
         app,
         config=DB_ORM_CONFIG,
         #自动创建表，没有就创建
-        generate_schemas=True,
+        generate_schemas=False,
         #异常信息处理
         add_exception_handlers=True,
     )
