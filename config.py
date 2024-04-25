@@ -11,6 +11,13 @@ from pydantic_settings  import BaseSettings
 from typing import List
 from dotenv import load_dotenv, find_dotenv
 
+# origins = [
+#     "http://localhost.tiangolo.com",
+#     "https://localhost.tiangolo.com",
+#     "http://localhost",
+#     "http://localhost:8080",
+# ]
+
 class Config(BaseSettings):
   # 加载数据库环境变量，有就会覆盖
   load_dotenv(find_dotenv(), override=True)
@@ -25,6 +32,7 @@ class Config(BaseSettings):
   TEMPLATE_DIR: str = os.path.join(STATIC_DIR, "templates")
   # 跨域请求
   CORS_ORIGINS: List[str] = ['*']
+  # CORS_ORIGINS: List[str] = origins
   CORS_ALLOW_CREDENTIALS: bool = True
   CORS_ALLOW_METHODS: List[str] = ['*']
   CORS_ALLOW_HEADERS: List[str] = ['*']
@@ -32,7 +40,7 @@ class Config(BaseSettings):
   #session 缓存配置，配置session过期时间为14天
   SECRET_KEY: str = "session"
   SESSION_COOKIE: str = "session_id"
-  # SESSION_MAX_AGE: int = 14 * 24 * 60 * 60
-  SESSION_MAX_AGE: int = 6
+  SESSION_MAX_AGE: int = 14 * 24 * 60 * 60
+  # SESSION_MAX_AGE: int = 6
 
 settings = Config()
