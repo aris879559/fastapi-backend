@@ -43,4 +43,9 @@ class Config(BaseSettings):
   SESSION_MAX_AGE: int = 14 * 24 * 60 * 60
   # SESSION_MAX_AGE: int = 6
 
+  # jwt
+  JWT_SECRET_KEY: str = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+  JWT_ALGORITHM: str = "HS256"
+  JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 24 * 60
+
 settings = Config()
