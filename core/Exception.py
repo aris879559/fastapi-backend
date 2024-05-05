@@ -38,7 +38,7 @@ async def mysql_operational_error(_: Request, exc: OperationalError):
     """
     print("OperationalError", exc)
     return JSONResponse({
-        "code": -1,
+        "code": 500,
         "message": "服务端错误",
         "data": []
     }, status_code=500)
@@ -50,12 +50,14 @@ async def http_error_handler(_: Request, exc: HTTPException):
     :param exc:
     :return:
     """
+    if exc.status_code == 401:
+        return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
 
     return JSONResponse({
         "code": exc.status_code,
         "message": exc.detail,
         "data": exc.detail
-    }, status_code=exc.status_code)
+    }, status_code=exc.status_code, headers=exc.headers)
 
 
 class UnicornException(Exception):

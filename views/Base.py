@@ -25,9 +25,11 @@ ViewsRouter = APIRouter()
 #     return templates.get_template("index.html").render({"request": request, "id": id})
 
 # 方式二
-ViewsRouter.get("/items/{id}", response_class=HTMLResponse)(home)
+# ViewsRouter.get("/items/{id}", response_class=HTMLResponse)(home)
 
 ViewsRouter.get("/req", response_class=HTMLResponse)(req_page)
 ViewsRouter.post("/req/form", response_class=HTMLResponse)(result_page)
 
 ViewsRouter.get("/session_test", response_class=HTMLResponse)(session_test)
+
+ViewsRouter.get("/", tags=["门户首页"], response_class=HTMLResponse)(home)

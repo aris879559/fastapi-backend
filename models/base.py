@@ -7,7 +7,8 @@
 """
 from tortoise import fields, Model
 from tortoise.models import Model
-
+from pydantic import Field, BaseModel
+from typing import Optional
 
 # class User(Model):
 #   username = fields.CharField(null=True, max_length=20, description="用户名")
@@ -56,6 +57,7 @@ class User(TimestampMixin):
     username = fields.CharField(null=True, max_length=20, description="用户名")
     user_type = fields.BooleanField(default=False, description="用户类型 True:超级管理员 False:普通管理员")
     password = fields.CharField(null=True, max_length=255)
+    age = fields.IntField(default=0, null=True, description='年龄')
     nickname = fields.CharField(default='wei', max_length=255, description='昵称')
     user_phone = fields.CharField(null=True, description="手机号", max_length=11)
     user_email = fields.CharField(null=True, description='邮箱', max_length=255)
@@ -97,3 +99,11 @@ class AccessLog(TimestampMixin):
     class Meta:
         table_description = "用户操作记录表"
         table = "access_log"
+
+class SystemParams(TimestampMixin):
+    params_name = fields.CharField(unique=True, max_length=255, description="参数名")
+    params = fields.JSONField(description="参数")
+
+    class Meta:
+        table_description = "系统参数表"
+        table = "system_params"

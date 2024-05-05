@@ -6,19 +6,21 @@
 @Desc: JWT鉴权
 """
 
-from fastapi import Request, Depends, HTTPException
+from datetime import timedelta, datetime
+import jwt
+from fastapi import HTTPException, Request, Depends
 from fastapi.security import SecurityScopes
+from fastapi.security.oauth2 import OAuth2PasswordBearer
+from jwt import PyJWTError
+from pydantic import ValidationError
 from starlette import status
 from config import settings
 from models.base import User, Access
 
-from fastapi.security.oauth2 import get_authorization_scheme_param, OAuth2PasswordBearer
-import  jwt
-from jwt import PyJWTError
-from pydantic import ValidationError
-from datetime import datetime, timedelta
 
-OAuth2 = OAuth2PasswordBearer("")
+# OAuth2 = OAuth2PasswordBearer("")
+OAuth2 = OAuth2PasswordBearer(settings.SWAGGER_UI_OAUTH2_REDIRECT_URL, scheme_name="User",
+                              scopes={"is_admin": "超级管理员", "not_admin": "普通管理员"})
 
 def create_access_token(data: dict):
     """
@@ -46,21 +48,6 @@ async def check_permissions(req: Request, security_scopes: SecurityScopes, token
     :return:
     """
     # ----------------------------------------验证JWT token------------------------------------------------------------
-    print("token", token)
-    print("scopes", security_scopes.scopes)
-    # 从请求头获取token
-    authorization: str = req.headers.get("Authorization")
-    scheme, param = get_authorization_scheme_param(authorization)
-
-    if not authorization or scheme.lower() != "bearer":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    # 取出 token
-    token = param
     try:
         # token解密
         payload = jwt.decode(
@@ -125,34 +112,18 @@ async def check_permissions(req: Request, security_scopes: SecurityScopes, token
         )
     # 判断是否设置了权限域
     if security_scopes.scopes:
-        # 返回当前权限域
-        print("当前域：", security_scopes.scopes)
-        # 用户权限域
-        scopes = []
         # 非超级管理员且当前域需要验证
         if not user_type and security_scopes.scopes:
             # 未查询用户是否有对应权限
-            # is_pass = await Access.get_or_none(role__user__id=user_id, is_check=True,
-            #                               scopes__in=set(security_scopes.scopes),
-            #                               role__role_status=True)
-            is_pass = await Access.filter(role__user__id=user_id, is_check=True,
-                                               scopes__in=set(security_scopes.scopes),
-                                               role__role_status=True)
-            # 未查询到对应权限
+            is_pass = await Access.filter(
+                role__user__id=user_id, is_check=True, scopes__in=set(security_scopes.scopes)).all()
             if not is_pass:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Not permissions",
                     headers={"scopes": security_scopes.scope_str},
                 )
-            # 查询用户所有权限
-            scopes = await Access.filter(role__user__id=user_id, is_check=True,
-                                         role__role_status=True).values_list("scopes")
-        # 缓存用户全部权限
-        req.state.scopes = scopes
-
     # 缓存用户ID
     req.state.user_id = user_id
     # 缓存用户类型
     req.state.user_type = user_type
-

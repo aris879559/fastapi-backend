@@ -7,7 +7,6 @@
 """
 
 import hashlib
-import random
 import uuid
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 
@@ -43,7 +42,6 @@ def check_password(password: str, old: str):
         return True
     else:
         return False
-
 
 def code_number(ln: int):
     """

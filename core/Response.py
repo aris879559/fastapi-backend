@@ -43,6 +43,6 @@ def success(data=None, msg=''):
     return base_response(200, msg, data)
 
 
-def fail(code=-1, msg='', data=None):
+def fail(code=500, msg='', data=None):
     """失败返回格式"""
     return base_response(code, msg, data)
