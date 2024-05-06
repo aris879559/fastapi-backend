@@ -17,6 +17,7 @@ from config import settings
 from models.base import User
 from schemas.base import WebsocketMessage
 from typing import Any
+from core.Response import success, fail
 
 router = APIRouter()
 
@@ -45,6 +46,11 @@ def check_token(token: str):
         return False
     return uid
 
+def log_message(msg: WebsocketMessage):
+    """
+    打印 WebSocket 消息日志
+    """
+    print(f"Received WebSocket message: {msg.json()}")
 
 class Echo(WebSocketEndpoint):
     encoding = "json"
@@ -97,6 +103,7 @@ class Echo(WebSocketEndpoint):
             user = check_token(token)
             if user:
                 msg = WebsocketMessage(**msg)
+                print(msg)
                 action = msg.action
                 if action == 'push_msg':
                     # 群发消息
@@ -104,7 +111,8 @@ class Echo(WebSocketEndpoint):
                         msg.action = 'pull_msg'
                         msg.user = user
                         await i['con'].send_json(msg.dict())
-
+                    # 打印消息日志
+                    log_message(msg)
             else:
                 raise WebSocketDisconnect
         except Exception as e:
